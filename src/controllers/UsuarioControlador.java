@@ -2,34 +2,26 @@ package controllers;
 
 import daos.UsuarioDAO;
 import model.Usuario;
+import views.VentanaRegistro;
 import model.CalculadoraIMC;
 
 import java.util.List;
 
 public class UsuarioControlador {
 
-	private CalculadoraIMC calc = new CalculadoraIMC();
-	private UsuarioDAO dao = new UsuarioDAO();
+	private CalculadoraIMC calc;
+	private UsuarioDAO dao;
+	private VentanaRegistro vr;
 
-	public boolean guardarUsuario(String nombre, String edad, String peso, String altura) {
+	public void setVentana(VentanaRegistro vr) {
+		this.vr = vr;
+	}
 
-		try {
-			int e = Integer.parseInt(edad);
-			double p = Double.parseDouble(peso);
-			double a = Double.parseDouble(altura);
+	public boolean guardarUsuario(Usuario usuario) {
 
-			if (nombre.isBlank() || e <= 0 || p <= 0 || a <= 0)
-				return false;
-
-			Usuario u = new Usuario(nombre, e, p, a);
-
-			double imc = calc.obtenerIMC(p, a);
-			u.setIndiceMasa(imc);
-			u.setEstado(calc.clasificar(imc));
-
-			return dao.guardar(u);
-
-		} catch (Exception ex) {
+		if (dao.guardar(usuario)) {
+			return true;
+		} else {
 			return false;
 		}
 	}
@@ -37,4 +29,23 @@ public class UsuarioControlador {
 	public List<Usuario> obtenerLista() {
 		return dao.listar();
 	}
+
+	public double obtenerIMC(double p, double a) {
+		// TODO Auto-generated method stub
+		return calc.obtenerIMC(p, a);
+	}
+
+	public String clasificar(double imc) {
+		return calc.clasificar(imc);
+	}
+
+	public void setUsuarioDAO(UsuarioDAO usuarioDAO) {
+		this.dao = usuarioDAO;
+	}
+
+	public void setCalculadora(CalculadoraIMC calculadora) {
+		// TODO Auto-generated method stub
+		this.calc = calculadora;
+	}
+
 }

@@ -1,6 +1,7 @@
 package views;
 
 import controllers.UsuarioControlador;
+import model.Usuario;
 
 import javax.swing.*;
 import javax.swing.border.*;
@@ -18,7 +19,6 @@ public class VentanaRegistro extends JFrame implements ActionListener {
 	private JButton btnGuardar;
 	private JButton btnVer;
 	private JButton btnInfo;
-
 
 	// ── Paleta de colores unificada ──────────────────────────────────────────
 	static final Color C_BG = new Color(0xF5F7FA);
@@ -117,7 +117,7 @@ public class VentanaRegistro extends JFrame implements ActionListener {
 		btnPanel.add(btnGuardar);
 		btnPanel.add(btnVer);
 		btnPanel.add(btnInfo);
-		
+
 		btnGuardar.addActionListener(this);
 		btnVer.addActionListener(this);
 		btnInfo.addActionListener(this);
@@ -217,7 +217,6 @@ public class VentanaRegistro extends JFrame implements ActionListener {
 		return btn;
 	}
 
-	
 	public void setControlador(UsuarioControlador c) {
 		this.ctrl = c;
 	}
@@ -231,10 +230,33 @@ public class VentanaRegistro extends JFrame implements ActionListener {
 	}
 
 	private void guardar() {
-		boolean ok = ctrl.guardarUsuario(nombre.getText(), edad.getText(), peso.getText(), altura.getText());
-		JOptionPane.showMessageDialog(this, ok ? "Guardado correctamente" : "Error en datos");
-	}
 
+		try {
+			int e = Integer.parseInt(edad.getText());
+			double p = Double.parseDouble(peso.getText());
+			double a = Double.parseDouble(altura.getText());
+
+			if (nombre.getText().isBlank() || e <= 0 || p <= 0 || a <= 0) {
+				JOptionPane.showMessageDialog(this, "Error en datos");
+			} else {
+				Usuario u = new Usuario(nombre.getText(), e, p, a);
+
+				double imc = ctrl.obtenerIMC(p, a);
+				u.setIndiceMasa(imc);
+				u.setEstado(ctrl.clasificar(imc));
+
+				if (ctrl.guardarUsuario(u)) {
+					JOptionPane.showMessageDialog(this, "Guardado correctamente");
+				} else {
+					JOptionPane.showMessageDialog(this, "No se pudo guardar");
+				}
+
+			}
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
 
 	static class RoundedPanel extends JPanel {
 		private final int radius;
@@ -287,6 +309,5 @@ public class VentanaRegistro extends JFrame implements ActionListener {
 			return new Insets(thickness, thickness, thickness, thickness);
 		}
 	}
-
 
 }
