@@ -9,12 +9,12 @@ public class CalculadoraIMC {
 	public String clasificar(double imc) {
 
 		if (imc < 18)
-			return "Delgadez";
+			return "Bajo peso";
 		if (imc < 25)
 			return "Normal";
 		if (imc < 30)
-			return "Obesidad";
-		return "Riesgo";
+			return "Sobrepeso";
+		return "Obesidad";
 
 	}
 
